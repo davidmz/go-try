@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/davidmz/try"
+	"github.com/davidmz/go-try"
 )
 
 func ExampleIt() {
