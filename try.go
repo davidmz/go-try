@@ -1,5 +1,7 @@
 package try
 
+import "fmt"
+
 // Check is an advanced version of It that returns Result value. Result allows
 // to test/process error before throw.
 func Check(err error) *Result[struct{}] {
@@ -30,3 +32,7 @@ func ItVal[T any](val T, err error) T {
 // Throw is an alias for It. It throws err if err is not nil. The 'throw' verb
 // is more useful if you know exactly that err is not nil.
 func Throw(err error) { It(err) }
+
+// Throwf allows to create and throw new error. Arguments are the same as for
+// fmt.Errorf (and it is actually just a Throw(fmt.Errorf(...))).
+func Throwf(format string, args ...any) { Throw(fmt.Errorf(format, args...)) }
