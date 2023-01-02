@@ -46,3 +46,19 @@ func ExampleItVal() {
 	// "Good value"
 	// Oh, json: unsupported type: func()
 }
+
+func ExampleHandleAs() {
+
+	tryUnmarshal := func(data []byte) (result string, outErr error) {
+		defer try.HandleAs(&outErr, try.Annotate("tryUnmarshal error: %w"))
+
+		try.It(json.Unmarshal(data, &result))
+		return
+	}
+
+	_, err := (tryUnmarshal([]byte(`Bad JSON`)))
+	fmt.Println(err)
+
+	// Output:
+	// tryUnmarshal error: invalid character 'B' looking for beginning of value
+}
