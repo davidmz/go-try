@@ -15,15 +15,25 @@ func (r *Result[T]) Val() T { return r.value }
 // Err returns error contained in Result.
 func (r *Result[T]) Err() error { return r.error }
 
-// Allow checks if the Result's error is (as in errors.Is) any of the given
+// AllowOr checks if the Result's error is (as in errors.Is) any of the given
 // errs. If it is, the Result is returned, else the error is thrown.
 func (r *Result[T]) AllowOr(errs ...error) *Result[T] {
 	if r.error != nil {
 		for _, err := range errs {
-			if !errors.Is(r.error, err) {
-				r.Wrap()
+			if errors.Is(r.error, err) {
+				return r
 			}
 		}
+		r.Wrap()
+	}
+	return r
+}
+
+// AllowAsOr checks the Result's error as (as in errors.As) the given
+// target. If it is, the Result is returned, else the error is thrown.
+func (r *Result[T]) AllowAsOr(target any) *Result[T] {
+	if r.error != nil && !errors.As(r.error, target) {
+		r.Wrap()
 	}
 	return r
 }
@@ -33,6 +43,13 @@ func (r *Result[T]) AllowOr(errs ...error) *Result[T] {
 // thrown.
 func (r *Result[T]) Allow(errs ...error) (T, error) {
 	r1 := r.AllowOr(errs...)
+	return r1.value, r.error
+}
+
+// AllowAs checks the Result's error as (as in errors.As) the given target. If
+// it is, the Result value and error is returned, else the error is thrown.
+func (r *Result[T]) AllowAs(target any) (T, error) {
+	r1 := r.AllowAsOr(target)
 	return r1.value, r.error
 }
 
