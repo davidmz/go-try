@@ -14,6 +14,13 @@ func HandleAs(targetError *error, ws ...Wrapper) {
 	handle(recover(), func(err error) { *targetError = err }, ws...)
 }
 
+// Wrap handler catches thrown errors, wraps them by wrappers (use Annotate
+// here, if you need) and throws the resulting error. It is useful for wrapping
+// all the function errors in same way. See example for use case.
+func Wrap(ws ...Wrapper) {
+	handle(recover(), Throw, ws...)
+}
+
 func handle(pnc interface{}, fn func(error), ws ...Wrapper) {
 	if pnc == nil {
 		// none

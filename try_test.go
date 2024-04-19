@@ -62,3 +62,19 @@ func ExampleHandleAs() {
 	// Output:
 	// tryUnmarshal error: invalid character 'B' looking for beginning of value
 }
+
+func ExampleWrap() {
+	defer try.Handle(func(err error) { fmt.Println(err) })
+
+	tryUnmarshal := func(data []byte) (result string) {
+		defer try.Wrap(try.Annotate("tryUnmarshal error: %w"))
+
+		try.It(json.Unmarshal(data, &result))
+		return
+	}
+
+	tryUnmarshal([]byte(`Bad JSON`))
+
+	// Output:
+	// tryUnmarshal error: invalid character 'B' looking for beginning of value
+}
